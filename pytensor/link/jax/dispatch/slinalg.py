@@ -47,6 +47,19 @@ def jax_funcify_SolveTriangular(op, **kwargs):
     return solve_triangular
 
 
+@jax_funcify.register(Eigvalsh)
+def jax_funcify_Eigvalsh(op, **kwargs):
+    if op.lower:
+        UPLO = "L"
+    else:
+        UPLO = "U"
+
+    def eigvalsh_jax(a):
+        return jax.numpy.linalg.eigvalsh(a, UPLO=UPLO)
+    
+    return eigvalsh_jax
+
+
 @jax_funcify.register(BlockDiagonal)
 def jax_funcify_BlockDiagonalMatrix(op, **kwargs):
     def block_diag(*inputs):
